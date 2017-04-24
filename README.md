@@ -53,6 +53,20 @@ If you've already initialized git-flow, you can still set/change the path manual
 git config gitflow.path.hooks /path/to/git-flow-hooks
 ```
 
+### Prevention hooks
+
+The hooks that prevent direct commits to the master branch, and prevent merge marker commits, are `pre-commit` hooks.
+
+These only function if they're located in the `.git/hooks` directory of your working copy.
+In other words, after activating like described above, these hooks still won't kick in.
+
+I see 2 options:
+
+1. In stead of activating like described above, remove the `.git/hooks` directory and make it a symbolic link (`ln -s /path/to/git-flow-hooks .git/hooks`).
+2. Create a symbolic link to the `pre-commit` file (`ln -s /path/to/git-flow-hooks/pre-commit .git/hooks/pre-commit`).
+
+If you know a better way to use the `pre-commit` hooks, please let me know by opening an issue!
+
 Update
 ------
 
@@ -68,8 +82,19 @@ That's it, all your repositories that have git-flow initialized and use `/path/t
 Configuration
 -------------
 
-Copy the file `/path/to/git-flow-hooks/modules/git-flow-hooks-config.sh.dist` to `.git/git-flow-hooks-config.sh` and change whatever you like.
-This is completely optional.
+This is completely optional!
+
+#### Global
+
+Copy the file `/path/to/git-flow-hooks/modules/git-flow-hooks-config.sh.dist` to `/path/to/git-flow-hooks/git-flow-hooks-config.sh` (hooks directory) and change whatever you like.
+
+#### Local
+
+Copy the file `/path/to/git-flow-hooks/modules/git-flow-hooks-config.sh.dist` to `.git/git-flow-hooks-config.sh` (repository root) and change whatever you like.
+
+Any settings in the local configuration file will override settings in the global one. So remove settings you _don't_ want to override.
+
+#### git-flow
 
 [git-flow (AVH Edition)][1] has some useful configuration options too.
 See its [wiki][5] for a complete list.
@@ -89,6 +114,13 @@ A bump of that level will take place.
 
 If the commands are run with version, that version will be used (no bumping).
 
+Bump messages
+-------------
+
+git-flow-hooks bumps the version in a commit with the message "Bump version to %version%".
+
+If you want to use a different message, you can change it in the git-flow-hooks configuration.
+
 Automatic tag messages
 ----------------------
 
@@ -100,6 +132,16 @@ git config gitflow.release.finish.message "Release %tag%"
 ```
 
 If you like, you can change the tag-placeholder (`%tag%` in the example above) in the git-flow-hooks configuration.
+
+Plugins
+-------
+
+We want to create a plugin-like structure where users can add functionality in a more uniform way.
+Unfortunately, that would take some time and testing to implement.
+
+While it's in progress, you can try to use the following forks:
+
+* [Send notifications with changelog to Slack and HipChat](https://github.com/exAspArk/git-flow-hooks/tree/notify#sending-notifications) ([diff](https://github.com/jaspernbrouwer/git-flow-hooks/compare/master...exAspArk:notify))
 
 License
 =======

@@ -7,6 +7,10 @@ ICON_CROSS=$(printf $COLOR_RED'✘'$COLOR_DEFAULT)
 ROOT_DIR=$(git rev-parse --show-toplevel 2> /dev/null)
 HOOKS_DIR=$(dirname $SCRIPT_PATH)
 
+if [ -f "$HOOKS_DIR/git-flow-hooks-config.sh" ]; then
+    . "$HOOKS_DIR/git-flow-hooks-config.sh"
+fi
+
 if [ -f "$ROOT_DIR/.git/git-flow-hooks-config.sh" ]; then
     . "$ROOT_DIR/.git/git-flow-hooks-config.sh"
 fi
@@ -41,6 +45,15 @@ function __get_release_version_bumplevel {
     fi
 
     echo $VERSION_BUMPLEVEL_RELEASE
+}
+
+function __is_binary {
+    P=$(printf '%s\t-\t' -)
+    T=$(git diff --no-index --numstat /dev/null "$1")
+
+    case "$T" in "$P"*) return 0 ;; esac
+
+    return 1
 }
 
 function __get_current_version {
